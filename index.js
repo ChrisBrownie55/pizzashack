@@ -8,6 +8,9 @@ server.use(
   })
 );
 
+// Database
+require('./server-assets/db/mlab-config');
+
 // Routes
 const routes = {
   pizza: require('./server-assets/routes/pizza-routes')
