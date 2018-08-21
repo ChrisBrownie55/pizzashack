@@ -1,6 +1,8 @@
 const server = require('express')();
 const bp = require('body-parser');
+const cors = require('cors');
 
+server.use(cors());
 server.use(bp.json());
 server.use(
   bp.urlencoded({
