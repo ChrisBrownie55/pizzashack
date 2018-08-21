@@ -15,8 +15,11 @@ const pizzas = [
   }
 ];
 
-router.get('/', (_, res) => res.send(pizzas));
-router.get('/:index', (req, res) => {
+router.get('/:index?', (req, res) => {
+  if (!req.params.index) {
+    res.send(pizzas);
+  }
+
   const index = parseInt(req.params.index);
   if (index === NaN || index >= pizzas.length || index < 0) {
     return res.status(416).send({
@@ -24,6 +27,11 @@ router.get('/:index', (req, res) => {
     });
   }
   res.send(pizzas[index]);
+});
+
+router.post('/', (req, res) => {
+  pizzas.push(req.body);
+  res.send(pizzas);
 });
 
 module.exports = router;
