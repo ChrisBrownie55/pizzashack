@@ -13,7 +13,7 @@ const routes = {
   pizza: require('./server-assets/routes/pizza-routes')
 };
 
-server.use(routes.pizza);
+server.use('/pizza', routes.pizza);
 
 const PORT = 8080;
 server.listen(PORT, () => console.log(`Running on port: ${PORT}.`));
