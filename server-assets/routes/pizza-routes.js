@@ -1,37 +1,65 @@
 const router = require('express').Router();
+const Pizza = require('../models/Pizza');
 
-const pizzas = [
-  {
-    name: `Marks Sweet n' Spicy`,
-    toppings: 'Pineapple, Jalapeño'
-  },
-  {
-    name: 'Jakes boring pizza',
-    toppings: `Cheese... that's it`
-  },
-  {
-    name: 'D$ delight',
-    toppings: 'All the meats'
-  }
-];
+async function getAllPizzas(res) {
+  const pizzas = await Pizza.find({});
+  return res.send(pizzas);
+}
 
-router.get('/:index?', (req, res) => {
-  if (!req.params.index) {
-    res.send(pizzas);
+async function getPizzaById(res, id) {
+  const pizza = await Pizza.findById(id);
+
+  console.log(pizza);
+  if (!pizza) {
+    return res.status(400).send({ error: 'Pizza with that id does not exist' });
   }
 
-  const index = parseInt(req.params.index);
-  if (index === NaN || index >= pizzas.length || index < 0) {
-    return res.status(416).send({
-      error: 'Out of range'
-    });
+  return res.send(pizza);
+}
+
+async function createPizza(res, pizzaObj) {
+  const pizza = await Pizza.create(pizzaObj);
+  if (pizza.error) {
+    return res.status(400).send(pizza.error);
   }
-  res.send(pizzas[index]);
+
+  return res.send(pizza);
+}
+
+async function removePizzaById(res, id) {
+  const deletedPizza = await Pizza.findByIdAndRemove(id);
+
+  console.log(deletedPizza);
+  if (!deletedPizza) {
+    return res.status(400).send({ error: 'Pizza with that id does not exist' });
+  }
+
+  return res.send(deletedPizza);
+}
+
+async function modifyPizza(res, id, modifiedObject) {
+  const newPizza = await Pizza.findByIdAndUpdate(id, modifiedObject, {
+    new: true
+  });
+
+  console.log(newPizza);
+  if (!newPizza) {
+    return res.status(400).send({ error: 'Pizza with that id does not exist' });
+  }
+
+  return res.send(newPizza);
+}
+
+router.get('/:id?', (req, res) => {
+  if (!req.params.id) {
+    return getAllPizzas(res);
+  }
+
+  getPizzaById(res, req.params.id);
 });
 
-router.post('/', (req, res) => {
-  pizzas.push(req.body);
-  res.send(pizzas);
-});
+router.post('/', async (req, res) => createPizza(res, req.body));
+
+router.delete('/:id', (req, res) => modifyPizza(res, req.params.id, req.body));
 
 module.exports = router;
