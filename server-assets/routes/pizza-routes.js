@@ -25,3 +25,5 @@ router.get('/:index', (req, res) => {
   }
   res.send(pizzas[index]);
 });
+
+module.exports = router;
